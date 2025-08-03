@@ -88,16 +88,16 @@ def user_register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')  # assumes you've named this URL
+            return redirect('login') 
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
 
 # 📚 Function-based view to list books
 def list_books_view(request):
-    books = Book.objects.select_related('author').all()
-    book_list = "\n".join([f"{book.title} by {book.auhor.name}" for book in books])
-    return HttpResponse(book_list, content_type='text/plain')
+    books = Book.objects.all()  
+    return render(request, 'relationship_app/list_books.html', {'books': books})
+
 
 # 🏛️ Class-based view for library detail
 class LibraryDetailView(DetailView):
