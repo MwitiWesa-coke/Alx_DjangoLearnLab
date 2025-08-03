@@ -1,15 +1,15 @@
-from django.urls import path, include
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 from .views import BookList, BookViewSet
+from rest_framework.authtoken.views import obtain_auth_token
+from django.urls import include
 
 # Initialize the router and register the BookViewSet
 router = DefaultRouter()
 router.register(r'books_all', BookViewSet, basename='book_all')
 
 urlpatterns = [
-    # Optional: Keep BookList endpoint (ListAPIView)
     path('books/', BookList.as_view(), name='book-list'),
-
-    # DRF router handles all CRUD URLs for BookViewSet
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('', include(router.urls)),
 ]
