@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
-from django.views.generic.detail import DetailView  # ✅ correct class name
+from django.views.generic.detail import DetailView 
+from django.contrib.auth.decorators import permission_required
 from .models import Book, Library
 
 @permission_required('relationship_app.can_add_book', raise_exception=True)
@@ -31,7 +32,7 @@ def edit_book(request, pk):
         form = BookForm(instance=book)
     return render(request, 'relationship_app/edit_book.html', {'form': form, 'book': book})
 
-@permission_required('relationship_app.can_delete_book, raise_exception=True')
+@permission_required('relationship_app.can_delete_book', raise_exception=True)
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
