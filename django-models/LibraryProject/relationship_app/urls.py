@@ -23,6 +23,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
 
     # Book List & Library Detail
-    path('books/', views.list_books, name='list_books'),
-    path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    path('books/', list_books_view, name='list_books'),
+    path('libraries/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 ]

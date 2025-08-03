@@ -4,7 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from django.views.generic.detail import DetailView 
 from django.contrib.auth.decorators import permission_required
-from .models import Book, Library
+from .models import Book
+from .models import Library
 from django.http import HttpResponse
 
 @permission_required('relationship_app.can_add_book', raise_exception=True)
@@ -93,13 +94,13 @@ def user_register(request):
     return render(request, 'relationship_app/register.html', {'form': form})
 
 # 📚 Function-based view to list books
-def list_books(request):
+def list_books_view(request):
     books = Book.objects.select_related('author').all()
     book_list = "\n".join([f"{book.title} by {book.auhor.name}" for book in books])
     return HttpResponse(book_list, content_type='text/plain')
 
 # 🏛️ Class-based view for library detail
-class LibraryDetailView(DetailView):  # ✅ fixed typo: was "Detailview"
+class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
