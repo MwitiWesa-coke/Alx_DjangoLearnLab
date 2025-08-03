@@ -5,7 +5,30 @@ from django.contrib.auth import login, logout
 from django.views.generic.detail import DetailView  # ✅ correct class name
 from .models import Book, Library
 
-# 🔐 Login view
+# == Role Check Functions ==
+def is_admin(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userproflie.role == 'Admin'
+
+def is_librarian(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.profile.role == 'Librarian'
+
+def is_member(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.profile.role == 'Member'
+
+# == Role-Based Views ==
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
+    
+#  Login view
 def register(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
