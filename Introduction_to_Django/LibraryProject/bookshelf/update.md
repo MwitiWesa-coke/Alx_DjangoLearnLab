@@ -1,5 +1,5 @@
 >>> b = Book.objects.get(title="1984")
->>> book.title = "Nineteen Eighty-Four"
->>> book.save()
+>>> b.title = "Nineteen Eighty-Four"  # update book.title
+>>> b.save()
 >>> b
 # <Book: Nineteen Eighty-Four by George Orwell>
