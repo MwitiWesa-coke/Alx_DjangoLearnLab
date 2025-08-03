@@ -6,7 +6,7 @@ from django.views.generic.detail import DetailView  # ✅ correct class name
 from .models import Book, Library
 
 # 🔐 Login view
-def user_login(request):
+def register(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
