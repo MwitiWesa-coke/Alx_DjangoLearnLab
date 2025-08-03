@@ -1,1 +1,1 @@
-New Django projects
+THIS IS DJANGO
