@@ -1,20 +1,13 @@
-{% extends "blog/base.html" %}
+{% extends "base.html" %}
+{% load static %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Profile{% endblock %}
 
 {% block content %}
-<h2>Create an Account</h2>
-<form method="post">
+<h2>Profile</h2>
+<form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Register</button>
+    <button type="submit">Update Profile</button>
 </form>
-
-{% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
 {% endblock %}
