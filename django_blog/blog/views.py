@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm
 
+
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -13,6 +14,7 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, "blog/auth/register.html", {"form": form})
+
 
 @login_required
 def profile(request):
@@ -30,11 +32,6 @@ def profile(request):
 def home(request):
     return render(request, "blog/base.html")
 
+
 def posts(request):
     return render(request, "blog/posts.html")
-
-def login_view(request):
-    return HttpResponse("Logi page (to be built)")
-
-def register(request):
-    return HttpResponse("Register page (to be built)")
