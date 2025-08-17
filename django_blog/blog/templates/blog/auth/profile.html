@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Your Profile - Django Blog{% endblock %}
+
+{% block content %}
+<h2>Your Profile</h2>
+
+{% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save changes</button>
+</form>
+{% endblock %}
