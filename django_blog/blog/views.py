@@ -28,7 +28,6 @@ def profile(request):
         form = UserUpdateForm(instance=request.user)
     return render(request, "blog/auth/profile.html", {"form": form})
 
-
 def home(request):
     return render(request, "blog/base.html")
 
