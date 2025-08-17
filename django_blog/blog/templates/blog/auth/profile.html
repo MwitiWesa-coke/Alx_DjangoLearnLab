@@ -1,21 +1,20 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Your Profile - Django Blog{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block content %}
-<h2>Your Profile</h2>
+<h2>Create an Account</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
 
 {% if messages %}
-  <ul>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
 {% endif %}
-
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save changes</button>
-</form>
 {% endblock %}
