@@ -7,7 +7,7 @@ from django.db.models import Q
 
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
-from notifications.models import Notifications
+from notifications.models import Notification
 
 
 CustomUser = get_user_model()
