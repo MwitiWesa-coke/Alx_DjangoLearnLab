@@ -1,10 +1,14 @@
-from django.shortcuts import render
-from rest_framework import viewsets, permissions
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
-from rest_framework import filters
-from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, permissions, generics, filters, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import get_user_model
 from django.db.models import Q
+
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer
+from notifications.models import Notifications
+
 
 CustomUser = get_user_model()
 
@@ -57,3 +61,34 @@ class FeedView(generics.GenericAPIView):
 
         serializer = PostSerializer(posts, many=True, context={"request": request})
         return Response(serializer.data)
+
+class LikePostView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(post=post, user=request.user)
+
+        if created:
+            if post.author != request.user:
+                Notification.objects.create(
+                    recipient=post.author,
+                    actor=request.user,
+                    verb="liked",
+                    target=post,
+                )
+            return Response({"message": "Post liked"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"message": "You already liked this post"}, status=status.HTTP_200_OK)
+
+class UnlikePostView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        try:
+            like = Like.objects.get(post=post, user=request.user)
+            like.delete()
+            return Response({"message": "Post unliked"}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            return Response({"message": "You have not liked this post"}, status=status.HTTP_400_BAD_REQUEST)
