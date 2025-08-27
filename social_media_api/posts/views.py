@@ -8,6 +8,7 @@ from django.db.models import Q
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
 from notifications.models import Notification
+from django.shortcuts import get_object_or_404
 
 
 CustomUser = get_user_model()
@@ -67,7 +68,7 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        like, created = Like.objects.get_or_create(post=post, user=request.user)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
             if post.author != request.user:
@@ -87,7 +88,7 @@ class UnlikePostView(APIView):
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         try:
-            like = Like.objects.get(post=post, user=request.user)
+            like = Like.objects.get(user=request.user, post=post)
             like.delete()
             return Response({"message": "Post unliked"}, status=status.HTTP_200_OK)
         except Like.DoesNotExist:
