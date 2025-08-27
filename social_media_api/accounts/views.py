@@ -8,8 +8,7 @@ from django.contrib.auth import get_user_model
 
 from .serializers import RegisterSerializer, LoginSerializer, UserMiniSerializer
 
-User = get_user_model()
-
+CustomUser = get_user_model()
 
 class RegisterView(APIView):
     """
@@ -65,35 +64,20 @@ class ProfileView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-class FollowUserView(APIView):
+class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        try:
-            target_user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        if target_user == request.user:
-            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-
-        request.user.following.add(target_user)
-        return Response({"detail": f"You are now following {target_user.username}."}, status=status.HTTP_200_OK)
+        user_to_follow = get_object_or_404(CustomUser.objects.all(), id=user_id)
+        request.user.following.add(user_to_follow)
+        return Response({"detail": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
 
 
-class UnfollowUserView(APIView):
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        try:
-            target_user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        if target_user == request.user:
-            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-
-        request.user.following.remove(target_user)
-        return Response({"detail": f"you have unfollowed {target_user.username}."}, status=status.HTTP_200_OK)
-
+        user_to_unfollow = get_object_or_404(CustomUser.objects.all(), id=user_id)
+        request.user.following.remove(user_to_unfollow)
+        return Response({"detail": f"You unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
 
