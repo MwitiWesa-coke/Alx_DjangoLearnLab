@@ -6,7 +6,7 @@ from rest_framework import filters
 from rest_framework import generics
 from django.db.models import Q
 
-
+CustomUser = get_user_model()
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by("-created_at")
@@ -48,12 +48,12 @@ class CommentViewSet(viewsets.ModelViewSet):
             raise permissions.PermissionDenied("You can only delete your own comments.")
         instance.delete()
 
-class FeedView(generics.ListAPIView):
-    serializer_class = PostSerializer
+class FeedView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-def get_queryset(self):
-        user = self.request.user
-        # Get users this user follows
-        following_ids = user.following.values_list("id", flat=True)
-        return Post.objects.filter(author__id__in=list(following_ids) + [user.id]).order_by("-created_at")
+    def get(self, request):
+        following_users = request.user.following.all()
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+        serializer = PostSerializer(posts, many=True, context={"request": request})
+        return Response(serializer.data)
